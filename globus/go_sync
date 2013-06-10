@@ -1,0 +1,38 @@
+# Strap in virtualenv:
+import os
+import sys
+
+PY_VERSION_NAME = 'python{0}.{1}'.format(*sys.version_info[:2])
+sys.path.insert(0, os.path.join('env', 'lib', PY_VERSION_NAME, 'site-packages'))
+
+# Proceed:
+import argparse
+import sync
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Sync a local directory with a remote one")
+    parser.add_argument('username')
+    parser.add_argument('local_name', metavar='local-endpoint')
+    parser.add_argument('local_path', metavar='local-path')
+    parser.add_argument('remote_name', metavar='remote-endpoint')
+    parser.add_argument('remote_path', metavar='remote-path')
+    parser.add_argument('oauth-file')
+    parser.add_argument('-d', '--daemon', action='store_true')
+    parser.add_argument('--wait', type=int, default=(5*60))
+    namespace = parser.parse_args(argv)
+
+    args = vars(namespace)
+    args['token'] = open(args.pop('oauth-file')).read().strip()
+
+    daemon = args.pop('daemon')
+    if daemon:
+        sync.watch(**args)
+    else:
+        del args['wait']
+        sync.perform_sync(**args)
+
+
+if __name__ == '__main__':
+    main()

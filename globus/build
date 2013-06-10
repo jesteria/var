@@ -1,0 +1,14 @@
+#!/bin/sh
+VENV_VERSION=1.9.1
+
+curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-${VENV_VERSION}.tar.gz
+tar xf virtualenv-${VENV_VERSION}.tar.gz
+cd virtualenv-${VENV_VERSION}
+python virtualenv.py ../env
+cd -
+./env/bin/pip install -r requirements
+which sqlite3 || sudo apt-get install sqlite3
+sqlite3 sync.db "
+  CREATE TABLE files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, length INT, modified INT);
+  CREATE TABLE dirs(id INTEGER PRIMARY KEY, path TEXT UNIQUE, length INT);
+"
