@@ -48,8 +48,8 @@ def perform_sync(username, token, local_name, local_path,
     _code, _message, data = api.submission_id()
     xfer_submission_id = data['value']
     xfer = api_client.Transfer(
-        xfer_submission_id, local_name, remote_name, deadline,
-        sync_level=SYNC_LEVEL, verify_checksum=True
+        xfer_submission_id, local_name, remote_name, deadline, SYNC_LEVEL,
+        encrypt_data=True, verify_checksum=True
     )
 
     _code, _message, data = api.submission_id()
